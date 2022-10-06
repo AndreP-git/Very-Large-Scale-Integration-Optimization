@@ -226,14 +226,14 @@ for i in range(1, 2): # n_files+1
         heights.append(int(splitted[1]))
         
     # model selection
-    model_name = "rot" # base | rot
+    model_name = "base" # base | rot
     if model_name == "base":
         model = build_pulp_model(max_width, n_blocks, widths, heights)
     else:
         model = build_pulp_model_rot(max_width, n_blocks, widths, heights)
 
     # solver selection
-    solver_name = "mosek" # cplex | mosek
+    solver_name = "cplex" # cplex | mosek
     if solver_name == "cplex":
         solver = pulp.CPLEX_CMD(mip=True,
                                 msg=False,

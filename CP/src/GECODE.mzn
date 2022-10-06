@@ -29,6 +29,13 @@ var int: min_height = ceil((sum(b in blocks)(width[b] * height[b]) div max_width
 constraint result >= max(max(height), min_height);
 constraint forall(b in blocks) (cornery[b] + height[b] <= result);
 
+% 1.5) non overlap (naive version)
+constraint forall (b1 ,b2 in blocks where b1 < b2)
+ (cornery [b1] + height [b1] <= cornery [b2] \/ 
+ cornery [b2] + height [b2] <= cornery [b1 ] \/
+ cornerx [b1] + width [b1] <= cornerx [b2] \/ 
+ cornerx [b2] + width [b2] <= cornerx [b1]);
+
 % 2) width constraints (keep these?? To speedup the search???)
 array[blocks] of var bool: R;
 constraint forall(b in blocks)(R[b] <-> width[b] > max_width / 2);
@@ -46,12 +53,6 @@ constraint cumulative(cornerx, width, height, result);
 % 4) simmetry breaking contraints
 constraint forall(b1,b2 in blocks where
 b1 < b2 /\
-height[b1]=height[b2] /\
-width[b1]=width[b2])
-(lex_less([cornerx[b1],cornery[b1]], [cornerx[b2],cornery[b2]]));
-
-constraint forall(b1,b2 in blocks where
-b1 < b2 /\
 cornerx[b1]=cornerx[b2] /\ 
 cornery[b1]+height[b1]=cornery[b2] /\
 width[b1]=width[b2])
@@ -63,6 +64,12 @@ cornery[b1]=cornery[b2] /\
 cornerx[b1]+width[b1]=cornerx[b2] /\
 height[b1]=height[b2])
 (lex_less([cornerx[b1]],[cornerx[b2]]));
+
+constraint forall(b1,b2 in blocks where
+b1 < b2 /\
+height[b1]=height[b2] /\
+width[b1]=width[b2])
+(lex_less([cornerx[b1],cornery[b1]], [cornerx[b2],cornery[b2]]));
 
 % solving
 solve minimize result;

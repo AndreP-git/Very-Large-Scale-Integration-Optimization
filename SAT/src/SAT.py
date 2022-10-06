@@ -26,7 +26,40 @@ def solve():
              if i!=j else 0 for j in range(n_blocks)] 
             for i in range(n_blocks)]
     
-    # here !!!
+    # order encoding constraints
+    for i in range(n_blocks):
+        # COMMENT
+        for w in range(max_width - widths[i], max_width):
+            solver.add(x_coord[i][w])
+        # COMMENT
+        for h in range(min_height - heights[i], min_height):
+            solver.add(y_coord[i][h])
+        # COMMENT
+        for w in range(0, max_width - widths[i]):
+            solver.add(Or(
+                Not(x_coord[i][w]),
+                x_coord[i][w+1])
+            )
+        # COMMENT
+        for h in range(0, min_height - heights[i]):
+            solver.add(Or(
+                Not(y_coord[i][h]),
+                y_coord[i][h+1])
+            )
+            
+    # IDEA: for each pair of rectangles, it must be true that one
+    # of the two must be on the left to the other (same for above/below)
+    for i in range(n_blocks):
+        for j in range(n_blocks):
+            # we consider comparisions only when i<j
+            if i >= j: continue
+            
+            solver.add(Or(
+                left[i][j],
+                left[j][i],
+                below[i][j],
+                below[j][i]
+            ))
     
 # ------------------ END FUNCTION --------------------
 

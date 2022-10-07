@@ -89,7 +89,7 @@ def solve():
     def build_non_overlap_constraints_y_coord(i,j):
         partial_clause = []
         partial_clause.append([Not(y_coord[j][heights[i] - 1])])
-        for h in range(min_height - widths[i] - 1):
+        for h in range(min_height - heights[i] - 1):
             partial_clause.append([y_coord[i][h],
                                    Not(y_coord[j][h + heights[i]])])
         partial_clause.append([y_coord[i][min_height - heights[i] - 1]])
@@ -144,9 +144,13 @@ def solve():
     # setting timeout (300s)
     solver.set("timeout", 300000) 
     
-    return {"solver": solver,
-            "x_coord": x_coord,
-            "y_coord": y_coord}
+    if solver.check() == sat:
+        return {"solver": solver,
+                "x_coord": x_coord,
+                "y_coord": y_coord}
+    else: return {"solver": -1,
+                "x_coord": -1,
+                "y_coord": -1}
     
 # ------------------ END FUNCTION --------------------
 
@@ -156,7 +160,7 @@ n_files = len([f for f in os.listdir("./instances")
                if os.path.isfile(os.path.join("./instances", f))])
 
 # cycle over the list of input files
-for i in range(1, n_files+1):
+for i in range(1, 2): #n_files+1
     
     # opening file
     filename = "./instances/ins-{}.txt".format(i)

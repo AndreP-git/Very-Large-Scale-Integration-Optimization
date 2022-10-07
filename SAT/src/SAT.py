@@ -140,7 +140,13 @@ def solve():
                     left[i][j],
                     Not(below[j][i]))
                 )
-            
+    
+    # setting timeout (300s)
+    solver.set("timeout", 300000) 
+    
+    return {"solver": solver,
+            "x_coord": x_coord,
+            "y_coord": y_coord}
     
 # ------------------ END FUNCTION --------------------
 
@@ -175,26 +181,35 @@ for i in range(1, n_files+1):
     
     # measuring performances of solve
     start_time = time.time()
-    # SOLVE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    res = solve()
     end_time = time.time()
     
     # printing time performances
     time_spent = end_time - start_time
     print(filename + "\t{:.2f}".format(time_spent))
     
+    # extracting results
+    model = res["solver"].model()
+    x_coord = res["x_coord"]
+    y_coord = res["y_coord"]
+    
     # converting boolean variables into coordinates for the output
     corner_x, corner_y = [], []
     for i in range(n_blocks):
-        x_coord = 0
-        while x_coord < max_width:
-            # COMPLETE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            pass
+        x = 0
+        while x < max_width:
+            if model.evaluate(x_coord[i][x]):
+                corner_x.append(x)
+                break
+            x += 1
         
-        y_coord = 0
-        while y_coord < min_height:
-            # COMPLETE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            pass
-    
+        y = 0
+        while y < min_height:
+            if model.evaluate(y_coord[i][y]):
+                corner_y.append(y)
+                break
+            y += 1
+                
     # printing output files
     output_filename = "out-{}.txt".format(i)
     output_path = "../out/" + output_filename

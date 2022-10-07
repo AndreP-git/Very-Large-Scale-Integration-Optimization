@@ -39,7 +39,7 @@ def get_data(path):
 #---------------------END FUNCTION-------------------------
 
 # selecting file to plot
-filename = "out-{}.txt".format(36)
+filename = "out-{}.txt".format(1)
 path = "../out/" + filename
 results = get_data(path=path)
 

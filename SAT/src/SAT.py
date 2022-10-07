@@ -199,17 +199,17 @@ for i in range(1, 2): #n_files+1
     
     # converting boolean variables into coordinates for the output
     corner_x, corner_y = [], []
-    for i in range(n_blocks):
+    for r in range(n_blocks):
         x = 0
         while x < max_width:
-            if model.evaluate(x_coord[i][x]):
+            if model.evaluate(x_coord[r][x]):
                 corner_x.append(x)
                 break
             x += 1
         
         y = 0
         while y < min_height:
-            if model.evaluate(y_coord[i][y]):
+            if model.evaluate(y_coord[r][y]):
                 corner_y.append(y)
                 break
             y += 1

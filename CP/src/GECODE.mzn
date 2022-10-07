@@ -19,7 +19,7 @@ array[blocks] of var 0..w: cornerx;
 array[blocks] of var 0..h: cornery;
 
 % Constraints
-% 0) each rectangle must be smaller within max_width
+% 0) each rectangle must be within max_width
 constraint forall(b in blocks) (cornerx[b] + width[b] <= max_width);
 
 % 1) defining boundaries for the resulting variable

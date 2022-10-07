@@ -60,6 +60,87 @@ def solve():
                 below[i][j],
                 below[j][i]
             ))
+            
+    # non overlapping constraints x coord
+    def build_non_overlap_constraints_x_coord(i,j):
+        partial_clause = []
+        partial_clause.append([Not(x_coord[j][widths[i] - 1])])
+        for w in range(max_width - widths[i] - 1):
+            partial_clause.append([x_coord[i][w],
+                                   Not(x_coord[j][w + widths[i]])])
+        partial_clause.append([x_coord[i][max_width - widths[i] - 1]])
+        return partial_clause
+    
+    for i in range(n_blocks):
+        for j in range(i+1, n_blocks):
+            
+            # CONSTRAINT 1: if rect_i is on the right w.r.t rect_j, we
+            # must check if rect_j's x_coordinate does not overlap with rect_i
+            for literal in build_non_overlap_constraints_x_coord(i,j):
+                clause = [Not(left[i][j])] + literal
+                solver.add(Or(clause))
+            
+            # CONSTRAINT 2: same as CONSTRAINT 1, with i-j swapped
+            for literal in build_non_overlap_constraints_x_coord(j,i):
+                clause = [Not(left[j][i])] + literal
+                solver.add(Or(clause))
+    
+    # non overlapping constraints y coord
+    def build_non_overlap_constraints_y_coord(i,j):
+        partial_clause = []
+        partial_clause.append([Not(y_coord[j][heights[i] - 1])])
+        for h in range(min_height - widths[i] - 1):
+            partial_clause.append([y_coord[i][h],
+                                   Not(y_coord[j][h + heights[i]])])
+        partial_clause.append([y_coord[i][min_height - heights[i] - 1]])
+        return partial_clause
+    
+    for i in range(n_blocks):
+        for j in range(i+1, n_blocks):
+            
+            # CONSTRAINT 3: if rect_i is above rect_j, we
+            # must check if rect_j's y_coordinate does not overlap with rect_i
+            for literal in build_non_overlap_constraints_y_coord(i,j):
+                clause = [Not(below[i][j])] + literal
+                solver.add(Or(clause))
+            
+            # CONSTRAINT 4: same as CONSTRAINT 3, with i-j swapped
+            for literal in build_non_overlap_constraints_x_coord(j,i):
+                clause = [Not(below[j][i])] + literal
+                solver.add(Or(clause)) 
+    
+    # IDEA: preliminary check on pairs of rectangles, if x_coord_1 + x_coord_2 > max_width,
+    # then they cannot stay side by side (same for y_coords)
+    for i in range(n_blocks):
+        for j in range(i+1, n_blocks):
+            
+            # x_coord
+            if widths[i] + widths[j] > max_width:
+                solver.add(And(
+                    Not(left[i][j]),
+                    Not(left[j][i]))
+                )    
+
+            # y_coord
+            if heights[i] + heights[j] > min_height:
+                solver.add(And(
+                    Not(below[i][j]),
+                    Not(below[j][i]))
+                )
+    
+    # symmetry breaking constraints
+    for i in range(n_blocks):
+        for j in range(i+1, n_blocks):
+            
+            # if rect_1 and rect_2 have the same dimension, than we force rect_1
+            # to be on the left to eliminate symmetry (same for below)
+            if widths[i] == widths[j] and heights[i] == heights[j]:
+                solver.add(Not(left[j][i]))
+                solver.add(Or(
+                    left[i][j],
+                    Not(below[j][i]))
+                )
+            
     
 # ------------------ END FUNCTION --------------------
 

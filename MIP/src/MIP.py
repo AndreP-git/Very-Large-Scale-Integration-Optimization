@@ -21,13 +21,13 @@ def build_pulp_model(max_width, n_blocks, widths, heights):
     model += height, "height"
 
     # defining coordinates variables for rectangles
-    coord_x = [pulp.LpVariable("x_{}".format(i), 
+    x_coord = [pulp.LpVariable("x_{}".format(i), 
                                lowBound=0, 
                                upBound=int(max_width- widths[i]), 
                                cat=pulp.LpInteger)
                for i in range(n_blocks)]
     
-    coord_y = [pulp.LpVariable("y_{}".format(i),
+    y_coord = [pulp.LpVariable("y_{}".format(i),
                                lowBound=0,
                                upBound=int(upper_bound - heights[i]),
                                cat=pulp.LpInteger)
@@ -35,7 +35,7 @@ def build_pulp_model(max_width, n_blocks, widths, heights):
 
     # height constraint
     for i in range(n_blocks):
-        model += coord_y[i] + heights[i] <= height, "height boundary r_{}".format(i)
+        model += y_coord[i] + heights[i] <= height, "height boundary r_{}".format(i)
 
     # delta value
     delta = pulp.LpVariable.dicts(
@@ -51,8 +51,8 @@ def build_pulp_model(max_width, n_blocks, widths, heights):
     widths_arr = np.asarray(widths)
     heights_arr = np.asarray(heights)
     biggest_rect_idx = np.argmax(widths_arr * heights_arr)
-    model += coord_x[biggest_rect_idx] == 0, "biggest x_coord"
-    model += coord_y[biggest_rect_idx] == 0, "biggest y_coord"
+    model += x_coord[biggest_rect_idx] == 0, "biggest x_coord"
+    model += y_coord[biggest_rect_idx] == 0, "biggest y_coord"
 
     # non overlapping constraints
     for i in range(n_blocks):
@@ -65,16 +65,16 @@ def build_pulp_model(max_width, n_blocks, widths, heights):
                     model += delta[j][i][0] == 1
 
                 # COMMENTTTTTT
-                model += coord_x[i] + widths[i] <= coord_x[j] + (delta[i][j][0]) * max_width
+                model += x_coord[i] + widths[i] <= x_coord[j] + (delta[i][j][0]) * max_width
                 
                 # COMMENTTTTTT
-                model += coord_x[j] + widths[j] <= coord_x[i] + (delta[j][i][0]) * max_width
+                model += x_coord[j] + widths[j] <= x_coord[i] + (delta[j][i][0]) * max_width
                 
                 # COMMENTTTTTT
-                model += coord_y[i] + heights[i] <= coord_y[j] + (delta[i][j][1]) * upper_bound
+                model += y_coord[i] + heights[i] <= y_coord[j] + (delta[i][j][1]) * upper_bound
                 
                 # COMMENTTTTTT
-                model += coord_y[j] + heights[j] <= coord_y[i] + (delta[j][i][1]) * upper_bound
+                model += y_coord[j] + heights[j] <= y_coord[i] + (delta[j][i][1]) * upper_bound
                 
                 # COMMENTTTTTT
                 model += (delta[i][j][0] + delta[j][i][0] + delta[i][j][1] + delta[j][i][1] <= 3 )
@@ -102,13 +102,13 @@ def build_pulp_model_rot(max_width, n_blocks, widths, heights):
     model += height, "height"
 
     # defining coordinates variables for rectangles
-    coord_x = [pulp.LpVariable("x_{}".format(i),
+    x_coord = [pulp.LpVariable("x_{}".format(i),
                                lowBound=0,
                                upBound=int(max_width - min(widths[i], heights[i])),
                                cat=pulp.LpInteger)
                for i in range(n_blocks)]
     
-    coord_y = [pulp.LpVariable("y_{}".format(i),
+    y_coord = [pulp.LpVariable("y_{}".format(i),
                                lowBound=0,
                                upBound=int(upper_bound - min(widths[i], heights[i])),
                                cat=pulp.LpInteger)
@@ -134,13 +134,13 @@ def build_pulp_model_rot(max_width, n_blocks, widths, heights):
 
     # width boundary constraint
     for i in range(n_blocks):
-        model += (coord_x[i] + widths[i] * (1 - rotation[i]) +
+        model += (x_coord[i] + widths[i] * (1 - rotation[i]) +
                   heights[i] * rotation[i] <= max_width,
             "width boundary r_{}".format(i))
         
     # height boundary constraint
     for i in range(n_blocks):
-        model += (coord_y[i] + heights[i] * (1 - rotation[i]) +
+        model += (y_coord[i] + heights[i] * (1 - rotation[i]) +
                   widths[i] * rotation[i] <= height,
             "height boundary r_{}".format(i))
 
@@ -158,8 +158,8 @@ def build_pulp_model_rot(max_width, n_blocks, widths, heights):
     widths_arr = np.asarray(widths)
     heights_arr = np.asarray(heights)
     biggest_rect_idx = np.argmax(widths_arr * heights_arr)
-    model += coord_x[biggest_rect_idx] == 0, "biggest x_coord"
-    model += coord_y[biggest_rect_idx] == 0, "biggest y_coord"
+    model += x_coord[biggest_rect_idx] == 0, "biggest x_coord"
+    model += y_coord[biggest_rect_idx] == 0, "biggest y_coord"
 
     # non overlapping constraints
     for i in range(n_blocks):
@@ -174,24 +174,24 @@ def build_pulp_model_rot(max_width, n_blocks, widths, heights):
                     model += delta[j][i][0] == 1
 
                 # x axis i-j
-                model += (coord_x[i] + widths[i] * (1 - rotation[i]) +
+                model += (x_coord[i] + widths[i] * (1 - rotation[i]) +
                           heights[i] * rotation[i] <=
-                          coord_x[j] + delta[i][j][0] * max_width)
+                          x_coord[j] + delta[i][j][0] * max_width)
                 
                 # x axis j-i
-                model += (coord_x[j] + widths[j] * (1 - rotation[j]) +
+                model += (x_coord[j] + widths[j] * (1 - rotation[j]) +
                           heights[j] * rotation[j] <=
-                          coord_x[i] + delta[j][i][0] * max_width)
+                          x_coord[i] + delta[j][i][0] * max_width)
 
                 # y axis i-j
-                model += (coord_y[i] + heights[i] * (1 - rotation[i]) +
+                model += (y_coord[i] + heights[i] * (1 - rotation[i]) +
                           widths[i] * rotation[i] <=
-                          coord_y[j] + delta[i][j][1] * upper_bound)
+                          y_coord[j] + delta[i][j][1] * upper_bound)
                 
                 # y axis j-i
-                model += (coord_y[j] + heights[j] * (1 - rotation[j]) +
+                model += (y_coord[j] + heights[j] * (1 - rotation[j]) +
                           widths[j] * rotation[j] <=
-                          coord_y[i] + delta[j][i][1] * upper_bound)
+                          y_coord[i] + delta[j][i][1] * upper_bound)
 
                 # COMMENTTTTTT
                 model += (delta[i][j][0] + delta[j][i][0] + delta[i][j][1] + delta[j][i][1] <= 3)

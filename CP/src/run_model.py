@@ -41,7 +41,7 @@ def get_data(res):
 #---------------------END FUNCTION-------------------------
 
 # setting model, solver, input directory
-model_name = "GECODE.mzn"
+model_name = "GECODE.mzn" 
 solver_name = "gecode"
 input_dir = "instances_dzn"
 

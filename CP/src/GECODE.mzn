@@ -74,11 +74,11 @@ width[b1]=width[b2])
 % solving
 solve minimize result;
 
-solve :: seq_search([
-        int_search([l], input_order,indomain_min)::restart_luby(200),
-        int_search(coord_x, first_fail, indomain_min),
-        int_search(coord_y, first_fail, indomain_min)])
-      minimize l;
+% solve :: seq_search([
+%         int_search([result], smallest, indomain_min) :: restart_luby(200),
+%         int_search(cornerx, first_fail, indomain_min),
+%         int_search(cornery, first_fail, indomain_min)])
+%         minimize result;
 
 % output
 output["\(max_width) \(result)\n"] ++

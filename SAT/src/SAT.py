@@ -160,7 +160,7 @@ n_files = len([f for f in os.listdir("./instances")
                if os.path.isfile(os.path.join("./instances", f))])
 
 # cycle over the list of input files
-for i in range(1, 2): #n_files+1
+for i in range(1, n_files+1):
     
     # opening file
     filename = "./instances/ins-{}.txt".format(i)
@@ -192,6 +192,14 @@ for i in range(1, 2): #n_files+1
     time_spent = end_time - start_time
     print(filename + "\t{:.2f}".format(time_spent))
     
+    output_filename = "out-{}.txt".format(i)
+    output_path = "../out/" + output_filename
+    output_file = open(output_path, "w")
+    
+    if res["solver"] == -1:
+        output_file.write("TIMEOUT")
+        continue
+    
     # extracting results
     model = res["solver"].model()
     x_coord = res["x_coord"]
@@ -215,9 +223,6 @@ for i in range(1, 2): #n_files+1
             y += 1
                 
     # printing output files
-    output_filename = "out-{}.txt".format(i)
-    output_path = "../out/" + output_filename
-    output_file = open(output_path, "w")
     output_file.write(str(max_width) + ' ' + str(min_height) + '\n')
     output_file.write(str(n_blocks) + '\n')
     zipped_data = zip(widths, heights, corner_x, corner_y)

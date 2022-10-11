@@ -206,7 +206,7 @@ n_files = len([f for f in os.listdir("./instances")
                if os.path.isfile(os.path.join("./instances", f))])
 
 # cycle over the list of input files
-for i in range(1, 2): # n_files+1
+for i in range(1, n_files+1):
     
     # opening file
     filename = "./instances/ins-{}.txt".format(i)
@@ -252,7 +252,15 @@ for i in range(1, 2): # n_files+1
     time_spent = end_time - start_time
     print(filename + "\t{:.2f}".format(time_spent))
     
+    output_filename = "out-{}.txt".format(i)
+    output_path = "../out/" + output_filename
+    output_file = open(output_path, "w")
+    
     result = {}
+    
+    if model.objective == None:
+        output_file.write("TIMEOUT")
+        continue
     
     result["height"] = round(pulp.value(model.objective))
     rotation = [False] * n_blocks
@@ -270,13 +278,9 @@ for i in range(1, 2): # n_files+1
     result["coords"] = coordinates
     result["rotation"] = rotation if model_name == "rot" else None
     
-    print(result)
+    #print(result)
     
     # printing output files
-    print(os.getcwd())
-    output_filename = "out-{}.txt".format(i)
-    output_path = "../out/" + output_filename
-    output_file = open(output_path, "w")
     output_file.write(str(max_width) + ' ' + str(result["height"]) + '\n')
     output_file.write(str(n_blocks) + '\n')
     zipped_data = zip(widths, heights, result["coords"]["x"], result["coords"]["y"])

@@ -226,14 +226,14 @@ for i in range(1, n_files+1):
         heights.append(int(splitted[1]))
         
     # model selection
-    model_name = "base" # base | rot
+    model_name = "rot" # base | rot
     if model_name == "base":
         model = build_pulp_model(max_width, n_blocks, widths, heights)
     else:
         model = build_pulp_model_rot(max_width, n_blocks, widths, heights)
 
     # solver selection
-    solver_name = "cplex" # cplex | mosek
+    solver_name = "mosek" # cplex | mosek
     if solver_name == "cplex":
         solver = pulp.CPLEX_CMD(mip=True,
                                 msg=False,
@@ -250,7 +250,7 @@ for i in range(1, n_files+1):
     
     # printing time performances
     time_spent = end_time - start_time
-    print(filename + "\t{:.2f}".format(time_spent))
+    print("ins-{}".format(i) + "\t{:.2f}".format(time_spent))
     
     output_filename = "out-{}.txt".format(i)
     output_path = "../out/" + output_filename
@@ -258,7 +258,13 @@ for i in range(1, n_files+1):
     
     result = {}
     
-    if model.objective == None:
+    # for var in model.variables():
+    #     print(f"{var.name}: {var.value()}")
+    #     print(pulp.value(model.objective))
+    
+    # TODO: check if OK!?!?
+    if (pulp.value(model.objective) == None) or (time_spent > 300):
+        print(pulp.value(model.objective))
         output_file.write("TIMEOUT")
         continue
     
@@ -267,7 +273,7 @@ for i in range(1, n_files+1):
     coordinates = {"x": [None] * n_blocks,
                    "y": [None] * n_blocks}
     for var in model.variables():
-        #print(f"{v.name}: {v.value()}")
+        #print(f"{var.name}: {var.value()}")
         if str(var.name).startswith("x_"):
             coordinates["x"][int(var.name[2:])] = round(var.varValue)
         elif str(var.name).startswith("y_"):

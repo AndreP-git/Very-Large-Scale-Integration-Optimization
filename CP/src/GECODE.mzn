@@ -72,13 +72,13 @@ width[b1]=width[b2])
 (lex_less([cornerx[b1],cornery[b1]], [cornerx[b2],cornery[b2]]));
 
 % solving
-solve minimize result;
+%solve minimize result;
 
-% solve :: seq_search([
-%         int_search([result], smallest, indomain_min) :: restart_luby(200),
-%         int_search(cornerx, first_fail, indomain_min),
-%         int_search(cornery, first_fail, indomain_min)])
-%         minimize result;
+solve :: seq_search([
+        int_search([result], smallest, indomain_min) :: restart_luby(200),
+        int_search(cornerx, first_fail, indomain_min),
+        int_search(cornery, first_fail, indomain_min)])
+        minimize result;
 
 % output
 output["\(max_width) \(result)\n"] ++

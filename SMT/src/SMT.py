@@ -49,16 +49,16 @@ def solve(min_height):
                     y_coord[i] <= y_coord[j])
             )
         ))
-    solver.add(Implies(
-        widths[i] + widths[j] > max_width,
-        And(x_coord[i] + widths[i] > x_coord[j],
-            x_coord[j] + widths[j] > x_coord[i])
-        ))
-    solver.add(Implies(
-        heights[i] + heights[j] > min_height,
-        And(y_coord[i] + heights[i] > y_coord[j],
-            y_coord[j] + heights[j] > y_coord[i])
-        ))
+    # solver.add(Implies(
+    #     widths[i] + widths[j] > max_width,
+    #     And(x_coord[i] + widths[i] > x_coord[j],
+    #         x_coord[j] + widths[j] > x_coord[i])
+    #     ))
+    # solver.add(Implies(
+    #     heights[i] + heights[j] > min_height,
+    #     And(y_coord[i] + heights[i] > y_coord[j],
+    #         y_coord[j] + heights[j] > y_coord[i])
+    #     ))
     
     # we try to minimize the minimum possible height
     solver.minimize(min_h)

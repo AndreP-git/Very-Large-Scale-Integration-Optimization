@@ -226,7 +226,7 @@ for i in range(1, n_files+1):
         heights.append(int(splitted[1]))
         
     # model selection
-    model_name = "rot" # base | rot
+    model_name = "base" # base | rot
     if model_name == "base":
         model = build_pulp_model(max_width, n_blocks, widths, heights)
     else:

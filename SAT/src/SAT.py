@@ -142,7 +142,10 @@ def solve():
                 )
     
     # setting timeout (300s)
-    solver.set("timeout", 300000) 
+    solver.set("timeout", 300000)
+    
+    if solver.check() != sat:
+        print(solver.check())
     
     if solver.check() == sat:
         return {"solver": solver,

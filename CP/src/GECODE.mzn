@@ -65,7 +65,7 @@ width[b1]=width[b2])
 
 % Solving
 
-%solve minimize result;
+% solve minimize result;
 
 solve :: seq_search([
         int_search([result], smallest, indomain_min) :: restart_luby(200),

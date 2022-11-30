@@ -28,19 +28,19 @@ def solve():
     
     # order encoding constraints
     for i in range(n_blocks):
-        # COMMENT
+        # width
         for w in range(max_width - widths[i], max_width):
             solver.add(x_coord[i][w])
-        # COMMENT
+        # height
         for h in range(min_height - heights[i], min_height):
             solver.add(y_coord[i][h])
-        # COMMENT
+        # width
         for w in range(0, max_width - widths[i]):
             solver.add(Or(
                 Not(x_coord[i][w]),
                 x_coord[i][w+1])
             )
-        # COMMENT
+        # height
         for h in range(0, min_height - heights[i]):
             solver.add(Or(
                 Not(y_coord[i][h]),

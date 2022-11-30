@@ -59,24 +59,24 @@ def build_pulp_model(max_width, n_blocks, widths, heights):
         for j in range(n_blocks):
             if i < j:
                 
-                # COMMENTTTTTTTTTTTTT
+                # width constraint
                 if widths[i] + widths[j] > max_width:
                     model += delta[i][j][0] == 1
                     model += delta[j][i][0] == 1
 
-                # COMMENTTTTTT
+                # i-j non overlap x
                 model += x_coord[i] + widths[i] <= x_coord[j] + (delta[i][j][0]) * max_width
                 
-                # COMMENTTTTTT
+                # j-i non overlap x
                 model += x_coord[j] + widths[j] <= x_coord[i] + (delta[j][i][0]) * max_width
                 
-                # COMMENTTTTTT
+                # i-j non overlap y
                 model += y_coord[i] + heights[i] <= y_coord[j] + (delta[i][j][1]) * upper_bound
                 
-                # COMMENTTTTTT
+                # j-i non overlap y
                 model += y_coord[j] + heights[j] <= y_coord[i] + (delta[j][i][1]) * upper_bound
                 
-                # COMMENTTTTTT
+                # checking 4 conditions
                 model += (delta[i][j][0] + delta[j][i][0] + delta[i][j][1] + delta[j][i][1] <= 3 )
 
     return model
@@ -166,7 +166,7 @@ def build_pulp_model_rot(max_width, n_blocks, widths, heights):
         for j in range(n_blocks):
             if i < j:
                 
-                # COMMENTTTTTTTT
+                # 
                 if all([(u + v) > max_width
                         for u in [widths[i], heights[i]]
                         for v in [widths[j], heights[i]]]):
@@ -193,7 +193,7 @@ def build_pulp_model_rot(max_width, n_blocks, widths, heights):
                           widths[j] * rotation[j] <=
                           y_coord[i] + delta[j][i][1] * upper_bound)
 
-                # COMMENTTTTTT
+                # checking 4 conditions
                 model += (delta[i][j][0] + delta[j][i][0] + delta[i][j][1] + delta[j][i][1] <= 3)
 
     return model
@@ -262,7 +262,7 @@ for i in range(1, n_files+1):
     #     print(f"{var.name}: {var.value()}")
     #     print(pulp.value(model.objective))
     
-    # TODO: check if OK!?!?
+    # checking results
     if (pulp.value(model.objective) == None) or (time_spent > 300):
         print(pulp.value(model.objective))
         output_file.write("TIMEOUT")
